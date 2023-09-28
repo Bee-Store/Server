@@ -6,7 +6,7 @@
   "author": "Ian Kamau, Kennedy Icika, Barsu",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon index.js"
+    "dev": "nodemon ./src/index.js"
   },
   "dependencies": {
     "@types/multer": "^1.4.7",
