@@ -12,6 +12,8 @@ mongoose
   .catch((err) => console.log(err));
 
 app.use(express.json());
+// app.use("/api/v1/", new AppRouter().router);
+
 app.listen(process.env.PORT || 5000, () => {
   Logger.debug("Server started");
   Logger.info(`Running on 👉🏼 ${process.env.PORT}`);
