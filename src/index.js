@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
+const Logger = require("./middlewares/loggers/logger");
 
 dotenv.config();
 
@@ -12,5 +13,6 @@ mongoose
 
 app.use(express.json());
 app.listen(process.env.PORT || 5000, () => {
-  console.log(`Server listening on ${process.env.PORT}`);
+  Logger.debug("Server started");
+  Logger.info(`Running on 👉🏼 ${process.env.PORT}`);
 });
