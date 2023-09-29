@@ -4,6 +4,9 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const Logger = require("./middlewares/loggers/logger");
 
+// Importing routes
+const authRoute = require("./routes/auth.route");
+
 dotenv.config();
 
 mongoose
@@ -12,7 +15,7 @@ mongoose
   .catch((err) => console.log(err));
 
 app.use(express.json());
-// app.use("/api/v1/", new AppRouter().router);
+app.use("/api/auth", authRoute);
 
 app.listen(process.env.PORT || 5000, () => {
   Logger.debug("Server started");
