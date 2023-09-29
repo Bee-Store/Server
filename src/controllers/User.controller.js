@@ -1,7 +1,6 @@
 const User = require("./../models/User.model");
 const jwt = require("jsonwebtoken");
 const CryptoJS = require("crypto-js");
-const helpers = require("./../helpers/helpers");
 const Logger = require("../middlewares/loggers/logger");
 
 class UserController {
@@ -73,6 +72,25 @@ class UserController {
           access_token: accessToken,
         },
       });
+    } catch (error) {
+      Logger.debug(error);
+      return {
+        status: 500,
+        message: "User Login Failed",
+        error: {
+          errors: {
+            details: error,
+          },
+        },
+      };
+    }
+  }
+
+  // Get user profile
+  async Profile(req, res) {
+    try {
+      const user = await req.user;
+      console.log(user.id);
     } catch (error) {
       Logger.debug(error);
       return {
