@@ -18,7 +18,7 @@ class UserController {
       const newUser = new User({
         username: req.body.username,
         email: req.body.email,
-        password: CryptoJS.AES.encrypt(
+        password: CryptoJS.SHA256(
           req.body.password,
           process.env.PASS_SEC
         ).toString(),
@@ -39,43 +39,40 @@ class UserController {
   // Login
   async Login(req, res) {
     try {
-      const { email, password } = req.body;
-      const user = await User.findOne({ email: email });
+      const user = await User.findOne({ email: req.body.email });
 
       if (!user) {
         res
           .status(404)
           .json({ message: "Either password or email is incorrect" });
+      }
+      const hashed = CryptoJS.SHA256(
+        req.body.password,
+        process.env.PASS_SEC
+      ).toString();
 
-        const hashed = CryptoJS.AES.encrypt(
-          password,
-          process.env.PASS_SEC
-        ).toString();
+      const ifPasswordMatch = user.password === hashed ? true : false;
 
-        const ifPasswordMatch = user.password === hashed ? true : false;
-
-        if (!ifPasswordMatch) {
-          return {
-            status: 400,
-            message: "Login failed. Either password or email is incorrect",
-          };
-        }
-
-        const accessToken = jwt.sign({ id: user.id }, process.env.JWT_SEC, {
-          expiresIn: "12h",
-        });
-
-        const { password, ...others } = user.toObject();
-
+      if (!ifPasswordMatch) {
         return {
-          status: 200,
-          message: "Login successful",
-          data: {
-            user: others,
-            access_token: accessToken,
-          },
+          status: 400,
+          message: "Login failed. Either password or email is incorrect",
         };
       }
+
+      const accessToken = jwt.sign({ id: user.id }, process.env.JWT_SEC, {
+        expiresIn: "12h",
+      });
+
+      const { password, ...others } = user.toObject();
+
+      res.status(200).json({
+        message: "Login successful",
+        data: {
+          user: others,
+          access_token: accessToken,
+        },
+      });
     } catch (error) {
       Logger.debug(error);
       return {
