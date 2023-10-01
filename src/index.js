@@ -9,6 +9,7 @@ const Logger = require("./middlewares/loggers/logger");
 // Importing routes
 const authRoute = require("./routes/auth.route");
 const cartRoute = require("./routes/cart.route");
+const productRoute = require("./routes/product.route");
 
 dotenv.config();
 
@@ -29,6 +30,7 @@ app.use(session({
 
 app.use("/api/auth", authRoute)
 app.use("/api/cart", cartRoute)
+app.use("/api/products", productRoute) 
 
 app.listen(process.env.PORT || 5000, () => {
   Logger.debug("Server started");
