@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const app = express();
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
@@ -19,6 +20,8 @@ mongoose
 
 app.use(express.json());
 
+app.use(cors());
+
 // Session setup
 app.use(session({
   secret: 'your-secret-key',
@@ -29,6 +32,7 @@ app.use(session({
 
 app.use("/api/auth", authRoute)
 app.use("/api/cart", cartRoute)
+
 
 app.listen(process.env.PORT || 5000, () => {
   Logger.debug("Server started");

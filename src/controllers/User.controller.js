@@ -24,9 +24,11 @@ class UserController {
         phoneNumber: req.body.phoneNumber,
       });
 
-      const savedUser = await newUser.save();
+      await newUser.save();
 
-      res.status(200).json({ message: newUser });
+      res
+        .status(200)
+        .json({ message: "Account created Successfully. Login to proceed." });
     } catch (error) {
       res.status(500).json({
         status: 500,
@@ -38,7 +40,7 @@ class UserController {
   // Login
   async Login(req, res) {
     try {
-      const user = await User.findOne({ email: req.body.email });
+      const user = await User.findOne({ username: req.body.username });
 
       if (!user) {
         res
