@@ -102,6 +102,85 @@ class CartController {
        res.status(500).json({ message: 'Server error' });
     }
   }
+  
+  // Increase the quantity of a product in the cart
+  async increaseQuantity(req, res) {
+    try {
+      const productId = req.body.productId;
+
+      // Check if the product exists
+      const product = await Product.findById(productId);
+      if (!product) {
+        return res.status(404).json({ message: 'Product not found' });
+      }
+
+      // Get the cart from the session
+      let cart;
+      if (req.session.cartId) {
+        cart = await Cart.findById(req.session.cartId);
+      } else {
+        return res.status(404).json({ message: 'Cart not found' });
+      }
+
+      // Find the product in the cart
+      const itemIndex = cart.products.findIndex(p => p.product.toString() === productId);
+      if (itemIndex < 0) {
+        return res.status(404).json({ message: 'Product not found in cart' });
+      }
+
+      // Increase the quantity of the product
+      cart.products[itemIndex].quantity++;
+
+      // Save the updated cart and store its ID in the session
+      await cart.save();
+
+      res.status(200).json(cart);
+    } catch (error) {
+      res.status(500).json({ message: 'Server error' });
+    }
+  }
+
+  // Decrease the quantity of a product in the cart
+  async decreaseQuantity(req, res) {
+    try {
+      const productId = req.body.productId;
+
+      // Check if the product exists
+      const product = await Product.findById(productId);
+      if (!product) {
+        return res.status(404).json({ message: 'Product not found' });
+      }
+
+      // Get the cart from the session
+      let cart;
+      if (req.session.cartId) {
+        cart = await Cart.findById(req.session.cartId);
+      } else {
+        return res.status(404).json({ message: 'Cart not found' });
+      }
+
+      // Find the product in the cart
+      const itemIndex = cart.products.findIndex(p => p.product.toString() === productId);
+      if (itemIndex < 0) {
+        return res.status(404).json({ message: 'Product not found in cart' });
+      }
+
+      // Decrease the quantity of the product
+      cart.products[itemIndex].quantity--;
+
+      // If the quantity is zero, remove the product from the cart
+      if (cart.products[itemIndex].quantity === 0) {
+        cart.products.splice(itemIndex, 1);
+      }
+
+      // Save the updated cart and store its ID in the session
+      await cart.save();
+
+      res.status(200).json(cart);
+    } catch (error) {
+      res.status(500).json({ message: 'Server error' });
+    }
+  }
 }
 
 module.exports = new CartController();
