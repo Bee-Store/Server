@@ -5,11 +5,12 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const session = require('express-session'); 
 const Logger = require("./middlewares/loggers/logger");
-
+const cors = require('cors'); // Import cors
 
 // Importing routes
 const authRoute = require("./routes/auth.route");
 const cartRoute = require("./routes/cart.route");
+const productRoute = require("./routes/product.route");
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ mongoose
 
 app.use(express.json());
 
+// Use cors middleware
 app.use(cors());
 
 // Session setup
@@ -32,6 +34,7 @@ app.use(session({
 
 app.use("/api/auth", authRoute)
 app.use("/api/cart", cartRoute)
+app.use("/api/products", productRoute) 
 
 
 app.listen(process.env.PORT || 5000, () => {
