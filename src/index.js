@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const app = express();
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
@@ -34,6 +35,7 @@ app.use(session({
 app.use("/api/auth", authRoute)
 app.use("/api/cart", cartRoute)
 app.use("/api/products", productRoute) 
+
 
 app.listen(process.env.PORT || 5000, () => {
   Logger.debug("Server started");
