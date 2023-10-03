@@ -9,7 +9,7 @@ class MpesaController {
   async stk(req, res) {
     try {
       const token = await req.token;
-      const phone = req.body.phone
+      const phone = req.body.phone;
       const amount = req.body.amount;
 
       // generating timestamp
@@ -38,7 +38,7 @@ class MpesaController {
             Timestamp: timestamp,
             TransactionType: "CustomerPayBillOnline",
             Amount: amount,
-            PartyA: `254${phone}0`,
+            PartyA: `254${phone}`,
             PartyB: shortcode,
             PhoneNumber: `254${phone}`,
             CallBackURL: "https://mydomain.com/pat",
@@ -55,8 +55,7 @@ class MpesaController {
           console.log(data);
           res.status(200).json(data);
         });
-      console.log(token)
-
+      console.log(token);
     } catch (error) {
       console.log(error);
       //   Logger.debug(error);
