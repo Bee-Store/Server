@@ -2,7 +2,10 @@ const User = require("./../models/User.model");
 const jwt = require("jsonwebtoken");
 const CryptoJS = require("crypto-js");
 const Logger = require("../middlewares/loggers/logger");
+const transporter = require("../helpers/helpers");
+const dotenv = require("dotenv");
 
+dotenv.config();
 class UserController {
   constructor() {}
   // Register
@@ -23,6 +26,15 @@ class UserController {
         ).toString(),
         phoneNumber: req.body.phoneNumber,
       });
+
+      const info = await transporter.sendMail({
+        from: process.env.GMAIL_NAME,
+        to: `${req.body.email}`,
+        subject: "Welcome to BeeKissed",
+        text: `Hello ${req.body.username}`,
+      });
+
+      console.log("Message sent: %s", info.messageId);
 
       await newUser.save();
 
