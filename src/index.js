@@ -3,13 +3,13 @@ const cors = require("cors");
 const app = express();
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
-const session = require('express-session'); 
+const session = require("express-session");
 const Logger = require("./middlewares/loggers/logger");
-
 
 // Importing routes
 const authRoute = require("./routes/auth.route");
 const cartRoute = require("./routes/cart.route");
+const mpesaRoute = require("./routes/mpesa.route");
 
 dotenv.config();
 
@@ -30,9 +30,9 @@ app.use(session({
   cookie: { secure: false } // set to true if your app is on https
 }));
 
-app.use("/api/auth", authRoute)
-app.use("/api/cart", cartRoute)
-
+app.use("/api/auth", authRoute);
+app.use("/api/cart", cartRoute);
+app.use("/api/mpesa", mpesaRoute);
 
 app.listen(process.env.PORT || 5000, () => {
   Logger.debug("Server started");
