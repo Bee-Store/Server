@@ -28,7 +28,7 @@ class UserController {
       });
 
       const info = await transporter.sendMail({
-        from: process.env.GMAIL_NAME,
+        from: process.env.GMAIL_USERNAME,
         to: `${req.body.email}`,
         subject: "Welcome to BeeKissed",
         text: `Hello ${req.body.username}`,
