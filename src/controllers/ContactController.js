@@ -13,7 +13,7 @@ class ContactController {
         name: req.body.name,
         email: req.body.email,
         message: req.body.message,
-        phoneNumber: req.body.phoneNumber,
+        topic: req.body.topic,
       });
 
       await newContact.save();
