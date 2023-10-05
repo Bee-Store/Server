@@ -27,6 +27,8 @@ class UserController {
         phoneNumber: req.body.phoneNumber,
       });
 
+      await newUser.save();
+      
       const info = await transporter.sendMail({
         from: process.env.GMAIL_USERNAME,
         to: `${req.body.email}`,
@@ -36,7 +38,6 @@ class UserController {
 
       console.log("Message sent: %s", info.messageId);
 
-      await newUser.save();
 
       res
         .status(200)

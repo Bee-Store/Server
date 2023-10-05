@@ -9,12 +9,12 @@ const contactSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  message: {
+  topic: {
     type: String,
     required: true,
   },
-  phoneNumber: {
-    type: Number,
+  message: {
+    type: String,
     required: true,
   },
 });
