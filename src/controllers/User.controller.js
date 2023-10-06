@@ -3,6 +3,9 @@ const jwt = require("jsonwebtoken");
 const CryptoJS = require("crypto-js");
 const Logger = require("../middlewares/loggers/logger");
 const transporter = require("../helpers/helpers");
+const ejs = require("ejs");
+const path = require("path");
+const generateRandomString = require("./../helpers/GenerateRandom");
 const dotenv = require("dotenv");
 
 dotenv.config();
@@ -28,7 +31,7 @@ class UserController {
       });
 
       await newUser.save();
-      
+
       const info = await transporter.sendMail({
         from: process.env.GMAIL_USERNAME,
         to: `${req.body.email}`,
@@ -37,7 +40,6 @@ class UserController {
       });
 
       console.log("Message sent: %s", info.messageId);
-
 
       res
         .status(200)
@@ -100,6 +102,49 @@ class UserController {
       };
     }
   }
+
+  // Forgot Password
+  async ForgotPassword(req, res) {
+    try {
+      const user = await User.findOne({ email: req.body.email });
+
+      const randomString = generateRandomString(8);
+
+      if (user) {
+        user.resetToken = randomString;
+        user.save();
+
+        // For sending the email
+        const filePath = path.join(
+          __dirname,
+          "./../services/templates/forgotPassword.ejs"
+        );
+
+        // rendering the ejs file and passing the "verification" parameter"
+        let html = await ejs.renderFile(filePath, {
+          verification: randomString,
+          name: "Martin",
+        });
+
+        const info = await transporter.sendMail({
+          from: process.env.GMAIL_USERNAME,
+          to: req.body.email,
+          subject: "Forgot Your Password",
+          html: html,
+        });
+
+        console.log("Message sent: %s", info.messageId);
+        res.status(200).json({
+          message:
+            "Request has been recieved. An email has been sent with the reset token",
+        });
+      }
+    } catch (error) {
+      Logger.debug(error);
+    }
+  }
+
+  // 
 
   // Get user profile
   async Profile(req, res) {
