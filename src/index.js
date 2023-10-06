@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const session = require('express-session'); 
 const Logger = require("./middlewares/loggers/logger");
-const cors = require('cors'); // Import cors
+
 
 // Importing routes
 const authRoute = require("./routes/auth.route");
@@ -23,6 +23,8 @@ app.use(express.json());
 
 // Use cors middleware
 app.use(cors());
+
+app.use('/uploads', express.static('uploads'));
 
 // Session setup
 app.use(session({

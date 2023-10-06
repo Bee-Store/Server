@@ -1,4 +1,18 @@
 const Product = require('./../models/Product.model');
+const multer = require('multer');
+
+// Multer configuration for storing images
+// Multer configuration for storing images
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './uploads'); // Define the destination folder for uploaded files
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname); // Define the filename for uploaded files
+  }
+});
+
+const upload = multer({ storage: storage }).single('image');
 
 class ProductController {
   constructor() {}
@@ -7,7 +21,13 @@ class ProductController {
   async getProducts(req, res) {
     try {
       const products = await Product.find();
-      res.status(200).json(products);
+  
+      // Get the paths to the uploaded images
+      // const productImages = products.map(product => product.image);
+  
+      // Send the images to the client
+      // res.status(200).json({ products, productImages });
+      res.status(200).json( products );
     } catch (error) {
       res.status(500).json({ message: 'Server error' });
     }
@@ -24,16 +44,34 @@ class ProductController {
     }
   }
 
-  // Add a new product
-  async addProduct(req, res) {
-    try {
-      const newProduct = new Product(req.body);
-      const savedProduct = await newProduct.save();
-      res.status(200).json(savedProduct);
-    } catch (error) {
-      res.status(500).json({ message: 'Server error' });
+   // Add a new product
+   // Add a new product
+addProduct(req, res) {
+  upload(req, res, (err) => {
+    if (err) {
+      console.log(err);
+      return res.status(500).json({ message: 'Error uploading file' });
     }
-  }
+    // Check if a file was uploaded
+    if (!req.file) {
+      return res.status(400).json({ message: 'Please upload a file' });
+    }
+
+    const newProduct = new Product({
+      name: req.body.name,
+      price: req.body.price,
+      image: req.file.path // Save the path of the uploaded image in the database 
+    });
+
+    newProduct.save()
+      .then(() => res.status(200).send('success'))
+      .catch(err => {
+        console.log(err);
+        res.status(500).json({ message: 'Error saving product' });
+      });
+  });
+}
+
 
   // Update a product
   async updateProduct(req, res) {
