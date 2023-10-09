@@ -144,7 +144,47 @@ class UserController {
     }
   }
 
-  // 
+  // ForgotPasswordReset
+  async ForgotPasswordReset(req, res) {
+    try {
+      const user = await User.findOne({ resetToken: req.body.token });
+      if (user) {
+        console.log(user)
+        const hashed = CryptoJS.SHA256(req.body.newPassword).toString();
+        user.password = hashed;
+
+        // For sending the email
+        const filePath = path.join(
+          __dirname,
+          "./../services/templates/resetPassword.ejs"
+        );
+
+        // rendering the ejs file and passing the "verification" parameter"
+        let html = await ejs.renderFile(filePath, {
+          name: user.username,
+        });
+
+        const info = await transporter.sendMail({
+          from: process.env.GMAIL_USERNAME,
+          to: user.email,
+          subject: "Password changed",
+          html: html,
+        });
+
+        console.log("Message sent: %s", info.messageId);
+
+        user.resetToken = undefined;
+
+        await user.save();
+      }
+
+      res
+        .status(200)
+        .json({ message: "You have successfully updated your password" });
+    } catch (error) {
+      Logger.debug(error);
+    }
+  }
 
   // Get user profile
   async Profile(req, res) {
