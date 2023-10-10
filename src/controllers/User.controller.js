@@ -55,8 +55,7 @@ class UserController {
   // Login
   async Login(req, res) {
     try {
-      const user = await User.findOne({ username: req.body.username });
-
+      const user = await User.findOne({ email: req.body.email });
       if (!user) {
         res
           .status(404)
@@ -138,6 +137,8 @@ class UserController {
           message:
             "Request has been recieved. An email has been sent with the reset token",
         });
+      }else{
+        res.status(404).json({message: "User not found"});
       }
     } catch (error) {
       Logger.debug(error);
