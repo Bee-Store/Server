@@ -6,6 +6,7 @@ const dotenv = require("dotenv");
 const session = require("express-session");
 const Logger = require("./middlewares/loggers/logger");
 
+
 // Importing routes
 const authRoute = require("./routes/auth.route");
 const cartRoute = require("./routes/cart.route");
@@ -24,6 +25,8 @@ app.use(express.json());
 
 // Use cors middleware
 app.use(cors());
+
+app.use('/uploads', express.static('uploads'));
 
 // Session setup
 app.use(
