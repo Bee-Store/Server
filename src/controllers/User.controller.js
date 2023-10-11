@@ -3,6 +3,11 @@ const jwt = require("jsonwebtoken");
 const CryptoJS = require("crypto-js");
 const Cart = require('./../models/Cart.model')
 const Logger = require("../middlewares/loggers/logger");
+const transporter = require("../helpers/helpers");
+const ejs = require("ejs");
+const path = require("path");
+const generateRandomString = require("./../helpers/GenerateRandom");
+const dotenv = require("dotenv");
 
 class UserController {
   constructor() {}
@@ -27,6 +32,15 @@ class UserController {
 
       await newUser.save();
 
+      const info = await transporter.sendMail({
+        from: process.env.GMAIL_USERNAME,
+        to: `${req.body.email}`,
+        subject: "Welcome to BeeKissed",
+        text: `Hello ${req.body.username}`,
+      });
+
+      console.log("Message sent: %s", info.messageId);
+
       res
         .status(200)
         .json({ message: "Account created Successfully. Login to proceed." });
@@ -41,8 +55,7 @@ class UserController {
   // Login
   async Login(req, res) {
     try {
-      const user = await User.findOne({ username: req.body.username });
-  
+      const user = await User.findOne({ email: req.body.email });
       if (!user) {
         res
           .status(404)
@@ -159,6 +172,91 @@ class UserController {
   //     };
   //   }
   // }
+
+  // Forgot Password
+  async ForgotPassword(req, res) {
+    try {
+      const user = await User.findOne({ email: req.body.email });
+
+      const randomString = generateRandomString(8);
+
+      if (user) {
+        user.resetToken = randomString;
+        user.save();
+
+        // For sending the email
+        const filePath = path.join(
+          __dirname,
+          "./../services/templates/forgotPassword.ejs"
+        );
+
+        // rendering the ejs file and passing the "verification" parameter"
+        let html = await ejs.renderFile(filePath, {
+          verification: randomString,
+          name: "Martin",
+        });
+
+        const info = await transporter.sendMail({
+          from: process.env.GMAIL_USERNAME,
+          to: req.body.email,
+          subject: "Forgot Your Password",
+          html: html,
+        });
+
+        console.log("Message sent: %s", info.messageId);
+        res.status(200).json({
+          message:
+            "Request has been recieved. An email has been sent with the reset token",
+        });
+      }else{
+        res.status(404).json({message: "User not found"});
+      }
+    } catch (error) {
+      Logger.debug(error);
+    }
+  }
+
+  // ForgotPasswordReset
+  async ForgotPasswordReset(req, res) {
+    try {
+      const user = await User.findOne({ resetToken: req.body.token });
+      if (user) {
+        console.log(user)
+        const hashed = CryptoJS.SHA256(req.body.newPassword).toString();
+        user.password = hashed;
+
+        // For sending the email
+        const filePath = path.join(
+          __dirname,
+          "./../services/templates/resetPassword.ejs"
+        );
+
+        // rendering the ejs file and passing the "verification" parameter"
+        let html = await ejs.renderFile(filePath, {
+          name: user.username,
+        });
+
+        const info = await transporter.sendMail({
+          from: process.env.GMAIL_USERNAME,
+          to: user.email,
+          subject: "Password changed",
+          html: html,
+        });
+
+        console.log("Message sent: %s", info.messageId);
+
+        user.resetToken = undefined;
+
+        await user.save();
+      }
+
+      res
+        .status(200)
+        .json({ message: "You have successfully updated your password" });
+    } catch (error) {
+      Logger.debug(error);
+    }
+  }
 
   // Get user profile
   async Profile(req, res) {
