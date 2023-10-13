@@ -53,80 +53,9 @@ class UserController {
   }
 
   // Login
-  async Login(req, res) {
-    try {
-      const user = await User.findOne({ email: req.body.email });
-      if (!user) {
-        res
-          .status(404)
-          .json({ message: "Either password or email is incorrect" });
-      }
-      const hashed = CryptoJS.SHA256(
-        req.body.password,
-        process.env.PASS_SEC
-      ).toString();
-  
-      const ifPasswordMatch = user.password === hashed ? true : false;
-  
-      if (!ifPasswordMatch) {
-        return {
-          status: 400,
-          message: "Login failed. Either password or email is incorrect",
-        };
-      }
-  
-      const accessToken = jwt.sign({ id: user.id }, process.env.JWT_SEC, {
-        expiresIn: "12h",
-      });
-  
-      // Get the temporary cart from the request
-      const tempCart = req.body.tempCart;
-  
-      // Find or create a cart for the user
-      let cart = await Cart.findOne({ userId: user.id });
-      if (!cart) {
-        cart = new Cart({ userId: user.id });
-      }
-  
-      // Merge tempCart with existing cart
-      for (let item of tempCart) {
-        const existingProductIndex = cart.products.findIndex(p => p.productId.toString() === item.product._id);
-        if (existingProductIndex >= 0) {
-          cart.products[existingProductIndex].quantity += item.quantity;
-        } else {
-          cart.products.push({ productId: item.product._id, quantity: item.quantity });
-        }
-      }
-  
-      await cart.save();
-  
-      const { password, ...others } = user.toObject();
-  
-      res.status(200).json({
-        message: "Login successful",
-        data: {
-          user: others,
-          access_token: accessToken,
-        },
-      });
-    } catch (error) {
-      Logger.debug(error);
-      return {
-        status: 500,
-        message: "User Login Failed",
-        error: {
-          errors: {
-            details: error,
-          },
-        },
-      };
-    }
-  }
-  
   // async Login(req, res) {
   //   try {
-  //     const user = await User.findOne({ username: req.body.username });
-
+  //     const user = await User.findOne({ email: req.body.email });
   //     if (!user) {
   //       res
   //         .status(404)
@@ -136,22 +65,43 @@ class UserController {
   //       req.body.password,
   //       process.env.PASS_SEC
   //     ).toString();
-
+  
   //     const ifPasswordMatch = user.password === hashed ? true : false;
-
+  
   //     if (!ifPasswordMatch) {
   //       return {
   //         status: 400,
   //         message: "Login failed. Either password or email is incorrect",
   //       };
   //     }
-
+  
   //     const accessToken = jwt.sign({ id: user.id }, process.env.JWT_SEC, {
   //       expiresIn: "12h",
   //     });
-
+  
+  //     // Get the temporary cart from the request
+  //     // const tempCart = req.body.tempCart;
+  
+  //     // // Find or create a cart for the user
+  //     // let cart = await Cart.findOne({ userId: user.id });
+  //     // if (!cart) {
+  //     //   cart = new Cart({ userId: user.id });
+  //     // }
+  
+  //     // Merge tempCart with existing cart
+  //     // for (let item of tempCart) {
+  //     //   const existingProductIndex = cart.products.findIndex(p => p.productId.toString() === item.product._id);
+  //     //   if (existingProductIndex >= 0) {
+  //     //     cart.products[existingProductIndex].quantity += item.quantity;
+  //     //   } else {
+  //     //     cart.products.push({ productId: item.product._id, quantity: item.quantity });
+  //     //   }
+  //     // }
+  
+  //     // await cart.save();
+  
   //     const { password, ...others } = user.toObject();
-
+  
   //     res.status(200).json({
   //       message: "Login successful",
   //       data: {
@@ -172,6 +122,56 @@ class UserController {
   //     };
   //   }
   // }
+  
+  async Login(req, res) {
+    try {
+      const user = await User.findOne({ email: req.body.email });
+
+      if (!user) {
+        res
+          .status(404)
+          .json({ message: "Either password or email is incorrect" });
+      }
+      const hashed = CryptoJS.SHA256(
+        req.body.password,
+        process.env.PASS_SEC
+      ).toString();
+
+      const ifPasswordMatch = user.password === hashed ? true : false;
+
+      if (!ifPasswordMatch) {
+        return {
+          status: 400,
+          message: "Login failed. Either password or email is incorrect",
+        };
+      }
+
+      const accessToken = jwt.sign({ id: user.id }, process.env.JWT_SEC, {
+        expiresIn: "12h",
+      });
+
+      const { password, ...others } = user.toObject();
+
+      res.status(200).json({
+        message: "Login successful",
+        data: {
+          user: others,
+          access_token: accessToken,
+        },
+      });
+    } catch (error) {
+      Logger.debug(error);
+      return {
+        status: 500,
+        message: "User Login Failed",
+        error: {
+          errors: {
+            details: error,
+          },
+        },
+      };
+    }
+  }
 
   // Forgot Password
   async ForgotPassword(req, res) {
