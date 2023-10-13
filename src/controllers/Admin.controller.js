@@ -1,6 +1,6 @@
 const Admin = require("../models/Admin.model");
 const jwt = require("jsonwebtoken");
-const ejs = require("ejs");
+const transporter = require("../helpers/helpers");
 const path = require("path");
 const CryptoJS = require("crypto-js");
 const Logger = require("../middlewares/loggers/logger");
@@ -106,8 +106,29 @@ class AdminController {
             // res.sendFile(`${__dirname}/result.pdf`);
           }
         );
+
+      const invoiceFile = path.join(
+        __dirname,
+        `../invoice/invoice-${req.body.name}.pdf`
+      );
+      const info = transporter.sendMail({
+        from: process.env.GMAIL_USERNAME,
+        to: req.body.email,
+        subject: "This is your invoice",
+        text: `Hello ${req.body.username}`,
+        attachments: [
+          {
+            filename: `invoice-${req.body.name}.pdf`,
+            path: invoiceFile,
+          },
+        ],
+      });
+
+      console.log("Message sent: %s", info.messageId);
+
     } catch (error) {
-      res.status(500).json({ message: "Server error" });
+      Logger.error(error);
+      // res.status(500).json({ message: "Server error" });
     }
   }
 }

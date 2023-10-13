@@ -1,7 +1,7 @@
 const User = require("./../models/User.model");
 const jwt = require("jsonwebtoken");
 const CryptoJS = require("crypto-js");
-const Cart = require('./../models/Cart.model')
+const Cart = require("./../models/Cart.model");
 const Logger = require("../middlewares/loggers/logger");
 const transporter = require("../helpers/helpers");
 const ejs = require("ejs");
@@ -65,29 +65,29 @@ class UserController {
   //       req.body.password,
   //       process.env.PASS_SEC
   //     ).toString();
-  
+
   //     const ifPasswordMatch = user.password === hashed ? true : false;
-  
+
   //     if (!ifPasswordMatch) {
   //       return {
   //         status: 400,
   //         message: "Login failed. Either password or email is incorrect",
   //       };
   //     }
-  
+
   //     const accessToken = jwt.sign({ id: user.id }, process.env.JWT_SEC, {
   //       expiresIn: "12h",
   //     });
-  
+
   //     // Get the temporary cart from the request
   //     // const tempCart = req.body.tempCart;
-  
+
   //     // // Find or create a cart for the user
   //     // let cart = await Cart.findOne({ userId: user.id });
   //     // if (!cart) {
   //     //   cart = new Cart({ userId: user.id });
   //     // }
-  
+
   //     // Merge tempCart with existing cart
   //     // for (let item of tempCart) {
   //     //   const existingProductIndex = cart.products.findIndex(p => p.productId.toString() === item.product._id);
@@ -97,11 +97,11 @@ class UserController {
   //     //     cart.products.push({ productId: item.product._id, quantity: item.quantity });
   //     //   }
   //     // }
-  
+
   //     // await cart.save();
-  
+
   //     const { password, ...others } = user.toObject();
-  
+
   //     res.status(200).json({
   //       message: "Login successful",
   //       data: {
@@ -122,7 +122,7 @@ class UserController {
   //     };
   //   }
   // }
-  
+
   async Login(req, res) {
     try {
       const user = await User.findOne({ email: req.body.email });
@@ -208,8 +208,8 @@ class UserController {
           message:
             "Request has been recieved. An email has been sent with the reset token",
         });
-      }else{
-        res.status(404).json({message: "User not found"});
+      } else {
+        res.status(404).json({ message: "User not found" });
       }
     } catch (error) {
       Logger.debug(error);
@@ -221,7 +221,7 @@ class UserController {
     try {
       const user = await User.findOne({ resetToken: req.body.token });
       if (user) {
-        console.log(user)
+        console.log(user);
         const hashed = CryptoJS.SHA256(req.body.newPassword).toString();
         user.password = hashed;
 
@@ -355,13 +355,13 @@ module.exports = new UserController();
 //       let cart;
 //       if (req.session.cartId) {
 //         cart = await Cart.findById(req.session.cartId);
-        
+
 //       } else {
 //         cart = new Cart();
 //         await cart.save();
 //         req.session.cartId = cart._id;
 //       }
-      
+
 //       for (let item of tempCart) {
 //         const itemIndex = cart.products.findIndex(p => p.product.toString() === item.product);
 //         if (itemIndex > -1) {
