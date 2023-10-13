@@ -6,6 +6,10 @@ const CryptoJS = require("crypto-js");
 const Logger = require("../middlewares/loggers/logger");
 const generateRandomString = require("../helpers/GenerateRandom");
 const dotenv = require("dotenv");
+const pdfTemplate = require("./../documents");
+const pdf = require("html-pdf");
+
+const fs = require("fs");
 
 dotenv.config();
 
@@ -83,6 +87,27 @@ class AdminController {
         status: 500,
         message: "Server error",
       });
+    }
+  }
+
+  async TestPdf(req, res) {
+    try {
+      const invoiceFolder = path.join(__dirname, "../invoice");
+      pdf
+        .create(pdfTemplate(req.body), {})
+        .toFile(
+          path.join(invoiceFolder, `invoice-${req.body.name}.pdf`),
+          (err) => {
+            if (err) {
+              res.send(Promise.reject());
+            }
+
+            res.send(Promise.resolve());
+            // res.sendFile(`${__dirname}/result.pdf`);
+          }
+        );
+    } catch (error) {
+      res.status(500).json({ message: "Server error" });
     }
   }
 }

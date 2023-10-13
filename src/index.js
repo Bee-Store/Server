@@ -3,6 +3,7 @@ const cors = require("cors");
 const app = express();
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
+const bodyParser = require("body-parser");
 const session = require("express-session");
 const Logger = require("./middlewares/loggers/logger");
 
@@ -26,6 +27,8 @@ app.use(express.json());
 // Use cors middleware
 app.use(cors());
 
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 app.use("/uploads", express.static("uploads"));
 
 // Session setup
