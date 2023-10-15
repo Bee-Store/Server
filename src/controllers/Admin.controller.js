@@ -103,19 +103,20 @@ class AdminController {
             }
 
             res.send(Promise.resolve());
-            // res.sendFile(`${__dirname}/result.pdf`);
           }
         );
 
+      // getting th created invoice/receipt pdf
       const invoiceFile = path.join(
         __dirname,
         `../invoice/invoice-${req.body.name}.pdf`
       );
+      // Sending the invoice/receipt to the user who has completed the purchase process/
       const info = transporter.sendMail({
         from: process.env.GMAIL_USERNAME,
         to: req.body.email,
         subject: "This is your invoice",
-        text: `Hello ${req.body.username}`,
+        text: `Hello ${req.body.name}`,
         attachments: [
           {
             filename: `invoice-${req.body.name}.pdf`,
@@ -124,11 +125,8 @@ class AdminController {
         ],
       });
 
-      console.log("Message sent: %s", info.messageId);
-
     } catch (error) {
-      Logger.error(error);
-      // res.status(500).json({ message: "Server error" });
+      res.status(500).json({ message: "Server error" });
     }
   }
 }
