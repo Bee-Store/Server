@@ -6,81 +6,137 @@ module.exports = ({ name, email }) => {
           <meta charset="utf-8">
           <title>PDF Result Template</title>
           <style>
-             .invoice-box {
-             max-width: 800px;
-             margin: auto;
-             padding: 30px;
-             border: 1px solid #eee;
-             box-shadow: 0 0 10px rgba(0, 0, 0, .15);
-             font-size: 16px;
-             line-height: 24px;
-             font-family: 'Helvetica Neue', 'Helvetica',
-             color: #555;
-             }
-             .margin-top {
-             margin-top: 50px;
-             }
-             .justify-center {
-             text-align: center;
-             }
-             .invoice-box table {
-             width: 100%;
-             line-height: inherit;
-             text-align: left;
-             }
-             .invoice-box table td {
-             padding: 5px;
-             vertical-align: top;
-             }
-             .invoice-box table tr td:nth-child(2) {
-             text-align: right;
-             }
-             .invoice-box table tr.top table td {
-             padding-bottom: 20px;
-             }
-             .invoice-box table tr.top table td.title {
-             font-size: 45px;
-             line-height: 45px;
-             color: #333;
-             }
-             .invoice-box table tr.information table td {
-             padding-bottom: 40px;
-             }
-             .invoice-box table tr.heading td {
-             background: #eee;
-             border-bottom: 1px solid #ddd;
-             font-weight: bold;
-             }
-             .invoice-box table tr.details td {
-             padding-bottom: 20px;
-             }
-             .invoice-box table tr.item td {
-             border-bottom: 1px solid #eee;
-             }
-             .invoice-box table tr.item.last td {
-             border-bottom: none;
-             }
-             .invoice-box table tr.total td:nth-child(2) {
-             border-top: 2px solid #eee;
-             font-weight: bold;
-             }
-             @media only screen and (max-width: 600px) {
-             .invoice-box table tr.top table td {
-             width: 100%;
-             display: block;
-             text-align: center;
-             }
-             .invoice-box table tr.information table td {
-             width: 100%;
-             display: block;
-             text-align: center;
-             }
-             }
+             .receipt-wrapper {
+                display: flex;
+                flex-direction: column;
+                padding: 2em 4em !important;
+                gap: 4em;
+              }
+              .class-header{
+                  display: flex;
+                  justify-content: space-between;
+              }
+              .receipt-info{
+                  display: flex;
+                  justify-content: space-between;
+                  /* gap: 3em; */
+              }
+              .customer-info{
+                  display: flex;
+                  flex-direction: column;
+                  gap: 8px;
+              }
+              .receipt-info > div{
+                  display: flex;
+                  flex-direction: column;
+                  gap: 20px;
+              }
+              .receipt-info > div:last-child{
+                  direction: column;
+                  gap: 8px;
+              }
+              .receipt-info  div:last-child > div{
+                  display: flex;
+                  gap: 10px;
+              }
           </style>
        </head>
        <body>
-          <h1>Hello ${name}</h1>
-          <h1>Your email is ${email}</h1>
+            <div class="receipt-wrapper">
+          <div class="class-header">
+            <span>BeeKissed ltd</span>
+            <span>RECEIPT</span>
+          </div>
+
+          <div class="receipt-info">
+            <div>
+              <span>Bill To</span>
+
+              <div class="customer-info">
+                <!-- For customer name -->
+                <span>${name}</span>
+                <span>Umoja</span>
+                <span>Nairobi, kenya</span>
+              </div>
+            </div>
+            <div>
+              <span>Ship To</span>
+
+              <div class="customer-info">
+                <!-- For customer name -->
+                <span>${name}</span>
+                <span>Umoja</span>
+                <span>Nairobi, kenya</span>
+              </div>
+            </div>
+
+            <div>
+              <div>
+                <span> Receipt# </span>
+
+                <!-- For Receipt ID -->
+                <span>US-001</span>
+              </div>
+
+              <div>
+                <span>Receipt Date</span>
+
+                <!-- For Receipt Date -->
+                <span>11/02/2019</span>
+              </div>
+
+              <div>
+                <span>Due Date</span>
+
+                <!-- For Receipt Due Date -->
+                <span>26/02/2019</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Table showing all purchased items -->
+          <table>
+            <thead>
+              <tr>
+                <th>QTY</th>
+                <th>DESCRIPTION</th>
+                <th>UNIT PRICE</th>
+                <th>AMOUNT</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>2</td>
+                <td>Fridge</td>
+                <td>15000</td>
+                <td>30000</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>Iphone 12</td>
+                <td>10000</td>
+                <td>20000</td>
+              </tr>
+              <tr>
+                <td>5</td>
+                <td>Hp Pavillion</td>
+                <td>3000</td>
+                <td>150000</td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td>Total</td>
+                <td><strong> 302884</strong></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div>
+            <h3>Terms & Conditions Apply</h3>
+            <span>Thank you ${name}</span>
+          </div>
+        </div>
        </body>
     </html>
     `;
