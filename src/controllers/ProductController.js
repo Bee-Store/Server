@@ -60,7 +60,7 @@ addProduct(req, res) {
     const newProduct = new Product({
       name: req.body.name,
       price: req.body.price,
-      image: req.file.path // Save the path of the uploaded image in the database 
+      image: `http://localhost:5000/${req.file.path}`, // Save the path of the uploaded image in the database
     });
 
     newProduct.save()
