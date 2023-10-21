@@ -1,7 +1,7 @@
 const Admin = require("../models/Admin.model");
 const jwt = require("jsonwebtoken");
 const transporter = require("../helpers/helpers");
-const path = require("path");
+const User = require("./../models/User.model");
 const CryptoJS = require("crypto-js");
 const Logger = require("../middlewares/loggers/logger");
 const generateRandomString = require("../helpers/GenerateRandom");
@@ -10,6 +10,7 @@ const pdfTemplate = require("./../documents");
 const pdf = require("html-pdf");
 
 const fs = require("fs");
+const path = require("path");
 
 dotenv.config();
 
@@ -92,11 +93,14 @@ class AdminController {
 
   async TestPdf(req, res) {
     try {
+      console.log(req.body);
+      const user = await User.findById(req.body.userId);
+      // console.log(req.body.tempCart);
       const invoiceFolder = path.join(__dirname, "../invoice");
       pdf
-        .create(pdfTemplate(req.body), {})
+        .create(pdfTemplate(user.username, req.body.tempCart), {})
         .toFile(
-          path.join(invoiceFolder, `invoice-${req.body.name}.pdf`),
+          path.join(invoiceFolder, `invoice-${user.username}.pdf`),
           (err) => {
             if (err) {
               res.send(Promise.reject());
@@ -109,23 +113,23 @@ class AdminController {
       // getting th created invoice/receipt pdf
       const invoiceFile = path.join(
         __dirname,
-        `../invoice/invoice-${req.body.name}.pdf`
+        `../invoice/invoice-${user.username}.pdf`
       );
       // Sending the invoice/receipt to the user who has completed the purchase process/
       const info = transporter.sendMail({
         from: process.env.GMAIL_USERNAME,
-        to: req.body.email,
+        to: user.email,
         subject: "This is your invoice",
-        text: `Hello ${req.body.name}`,
+        text: `Hello ${user.username}`,
         attachments: [
           {
-            filename: `invoice-${req.body.name}.pdf`,
+            filename: `invoice-${user.username}.pdf`,
             path: invoiceFile,
           },
         ],
       });
-
     } catch (error) {
+      console.log(error);
       res.status(500).json({ message: "Server error" });
     }
   }
