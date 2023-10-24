@@ -1,6 +1,7 @@
 const dotenv = require("dotenv");
 const Logger = require("../middlewares/loggers/logger");
 const axios = require("axios");
+const User = require("./../models/User.model");
 
 dotenv.config();
 
@@ -8,9 +9,13 @@ class MpesaController {
   constructor() {}
   async stk(req, res) {
     try {
+      const user = await User.findById(req.body.user.id);
       const token = await req.token;
-      const phone = req.body.phone;
-      const amount = req.body.amount;
+      const totalPrice = req.body.tempCart.reduce(
+        (total, item) => total + item.product.price * item.quantity,
+        0
+      );
+      console.log(totalPrice);
 
       // generating timestamp
       const date = new Date();
@@ -37,12 +42,12 @@ class MpesaController {
             Password: password,
             Timestamp: timestamp,
             TransactionType: "CustomerPayBillOnline",
-            Amount: amount,
-            PartyA: `254${phone}`,
+            Amount: totalPrice,
+            PartyA: `254${user.phoneNumber}`,
             PartyB: shortcode,
-            PhoneNumber: `254${phone}`,
+            PhoneNumber: `254${user.phoneNumber}`,
             CallBackURL: "https://mydomain.com/pat",
-            AccountReference: `254${phone}`,
+            AccountReference: `254${user.phoneNumber}`,
             TransactionDesc: "Test",
           },
           {
@@ -52,13 +57,13 @@ class MpesaController {
           }
         )
         .then((data) => {
-          console.log(data);
-          res.status(200).json(data);
+          console.log(data.data);
+          res.status(200).json(data.data);
         });
       console.log(token);
     } catch (error) {
       console.log(error);
-      //   Logger.debug(error);
+      Logger.debug(error);
       //   return {
       //     status: 500,
       //     message: "Stk push Failed",
