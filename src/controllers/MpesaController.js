@@ -2,6 +2,7 @@ const dotenv = require("dotenv");
 const Logger = require("../middlewares/loggers/logger");
 const axios = require("axios");
 const User = require("./../models/User.model");
+const Order = require("./../models/Order.model");
 
 dotenv.config();
 
@@ -16,7 +17,6 @@ class MpesaController {
         0
       );
       console.log(totalPrice);
-
       // generating timestamp
       const date = new Date();
       const timestamp =
@@ -26,40 +26,49 @@ class MpesaController {
         ("0" + date.getHours()).slice(-2) +
         ("0" + date.getMinutes()).slice(-2) +
         ("0" + date.getSeconds()).slice(-2);
+      const newOrder = new Order({
+        // orderDetails:
+        customerId: user._id,
+        orderDate: timestamp,
+        totalAmount: totalPrice,
+        status: "Pending",
+      });
 
-      const shortcode = process.env.MPESA_SHORTCODE;
-      const passkey = process.env.MPESA_PASSKEY;
+      await newOrder.save();
 
-      const password = new Buffer.from(
-        shortcode + passkey + timestamp
-      ).toString("base64");
+      // const shortcode = process.env.MPESA_SHORTCODE;
+      // const passkey = process.env.MPESA_PASSKEY;
 
-      await axios
-        .post(
-          process.env.STK_URL,
-          {
-            BusinessShortCode: shortcode,
-            Password: password,
-            Timestamp: timestamp,
-            TransactionType: "CustomerPayBillOnline",
-            Amount: totalPrice,
-            PartyA: `254${user.phoneNumber}`,
-            PartyB: shortcode,
-            PhoneNumber: `254${user.phoneNumber}`,
-            CallBackURL: "https://mydomain.com/pat",
-            AccountReference: `254${user.phoneNumber}`,
-            TransactionDesc: "Test",
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        )
-        .then((data) => {
-          console.log(data.data);
-          res.status(200).json(data.data);
-        });
+      // const password = new Buffer.from(
+      //   shortcode + passkey + timestamp
+      // ).toString("base64");
+
+      // await axios
+      //   .post(
+      //     process.env.STK_URL,
+      //     {
+      //       BusinessShortCode: shortcode,
+      //       Password: password,
+      //       Timestamp: timestamp,
+      //       TransactionType: "CustomerPayBillOnline",
+      //       Amount: totalPrice,
+      //       PartyA: `254${user.phoneNumber}`,
+      //       PartyB: shortcode,
+      //       PhoneNumber: `254742453610`,
+      //       CallBackURL: "https://mydomain.com/pat",
+      //       AccountReference: `254${user.phoneNumber}`,
+      //       TransactionDesc: "This is just a test transaction",
+      //     },
+      //     {
+      //       headers: {
+      //         Authorization: `Bearer ${token}`,
+      //       },
+      //     }
+      //   )
+      //   .then((data) => {
+      //     console.log(data.data);
+      //     res.status(200).json(data.data);
+      //   });
       console.log(token);
     } catch (error) {
       console.log(error);
