@@ -10,6 +10,7 @@ class MpesaController {
   constructor() {}
   async stk(req, res) {
     try {
+      console.log(req.body.tempCart);
       const user = await User.findById(req.body.user.id);
       const token = await req.token;
       const totalPrice = req.body.tempCart.reduce(
@@ -26,7 +27,6 @@ class MpesaController {
         ("0" + date.getHours()).slice(-2) +
         ("0" + date.getMinutes()).slice(-2) +
         ("0" + date.getSeconds()).slice(-2);
-      
 
       const shortcode = process.env.MPESA_SHORTCODE;
       const passkey = process.env.MPESA_PASSKEY;
@@ -67,10 +67,16 @@ class MpesaController {
           customerId: user._id,
           orderDate: timestamp,
           totalAmount: totalPrice,
+          products: req.body.tempCart,
           status: "Pending",
         });
 
         await newOrder.save();
+
+
+
+
+
       // const passkey = process.env.MPESA_PASSKEY;
 
       // const password = new Buffer.from(
@@ -103,7 +109,7 @@ class MpesaController {
       //     console.log(data.data);
       //     res.status(200).json(data.data);
       //   });
-      console.log(token);
+      // console.log(token);
     } catch (error) {
       console.log(error);
       Logger.debug(error);
