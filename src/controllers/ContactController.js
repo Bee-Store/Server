@@ -25,6 +25,18 @@ class ContactController {
       Logger.error(error);
     }
   }
+
+  async getAllMessages(req,res) {
+    try {
+      const allMessages = await Contact.find({});
+      if (!allMessages) {
+        res.status(200).json({ Message: "No messages found" });
+      }
+      res.status(200).json({ data: allMessages });
+    } catch (error) {
+      Logger.error(error);
+    }
+  }
 }
 
 module.exports = new ContactController();
