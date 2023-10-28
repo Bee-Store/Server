@@ -2,4 +2,5 @@ node_modules/
 logs/
 .env*
 uploads/
-# invoice*
+src/invoice*
+src/invoice/

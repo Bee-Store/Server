@@ -79,26 +79,26 @@ class UserController {
   //       expiresIn: "12h",
   //     });
 
-  //     // Get the temporary cart from the request
-  //     // const tempCart = req.body.tempCart;
+  // // Get the temporary cart from the request
+  // const tempCart = req.body.tempCart;
 
-  //     // // Find or create a cart for the user
-  //     // let cart = await Cart.findOne({ userId: user.id });
-  //     // if (!cart) {
-  //     //   cart = new Cart({ userId: user.id });
-  //     // }
+  // // Find or create a cart for the user
+  // let cart = await Cart.findOne({ userId: user.id });
+  // if (!cart) {
+  //   cart = new Cart({ userId: user.id });
+  // }
 
-  //     // Merge tempCart with existing cart
-  //     // for (let item of tempCart) {
-  //     //   const existingProductIndex = cart.products.findIndex(p => p.productId.toString() === item.product._id);
-  //     //   if (existingProductIndex >= 0) {
-  //     //     cart.products[existingProductIndex].quantity += item.quantity;
-  //     //   } else {
-  //     //     cart.products.push({ productId: item.product._id, quantity: item.quantity });
-  //     //   }
-  //     // }
+  // Merge tempCart with existing cart
+  // for (let item of tempCart) {
+  //   const existingProductIndex = cart.products.findIndex(p => p.productId.toString() === item.product._id);
+  //   if (existingProductIndex >= 0) {
+  //     cart.products[existingProductIndex].quantity += item.quantity;
+  //   } else {
+  //     cart.products.push({ productId: item.product._id, quantity: item.quantity });
+  //   }
+  // }
 
-  //     // await cart.save();
+  // await cart.save();
 
   //     const { password, ...others } = user.toObject();
 
@@ -145,6 +145,32 @@ class UserController {
           message: "Login failed. Either password or email is incorrect",
         };
       }
+
+      // // Get the temporary cart from the request
+      // const tempCart = req.body.tempCart;
+
+      // // Find or create a cart for the user
+      // let cart = await Cart.findOne({ userId: user.id });
+      // if (!cart) {
+      //   cart = new Cart({ userId: user.id });
+      // }
+
+      // // Merge tempCart with existing cart
+      // for (let item of tempCart) {
+      //   const existingProductIndex = cart.products.findIndex(
+      //     (p) => p.productId.toString() === item.product._id
+      //   );
+      //   if (existingProductIndex >= 0) {
+      //     cart.products[existingProductIndex].quantity += item.quantity;
+      //   } else {
+      //     cart.products.push({
+      //       productId: item.product._id,
+      //       quantity: item.quantity,
+      //     });
+      //   }
+      // }
+
+      // await cart.save();
 
       const accessToken = jwt.sign({ id: user.id }, process.env.JWT_SEC, {
         expiresIn: "12h",

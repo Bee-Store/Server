@@ -14,6 +14,7 @@ const productRoute = require("./routes/product.route");
 const mpesaRoute = require("./routes/mpesa.route");
 const contactRoute = require("./routes/contact.route");
 const adminRoute = require("./routes/admin.route");
+const OrderController = require("./routes/order.route")
 
 dotenv.config();
 
@@ -47,6 +48,7 @@ app.use("/api/mpesa", mpesaRoute);
 app.use("/api/products", productRoute);
 app.use("/api/contact", contactRoute);
 app.use("/api/admin", adminRoute);
+app.use("/api/orders", OrderController);
 
 app.listen(process.env.PORT || 5000, () => {
   Logger.debug("Server started");
