@@ -11,6 +11,21 @@ const dotenv = require("dotenv");
 
 class UserController {
   constructor() {}
+
+  // Getting all User
+  async getAllUsers(req, res) {
+    try {
+      const allUsers = await User.find({});
+      if (!allUsers) {
+        res.status(200).json({ message: "No users found" });
+      }
+
+      res.status(200).json({ data: allUsers });
+    } catch (error) {
+      Logger.error(error);
+    }
+  }
+
   // Register
   async Register(req, res) {
     try {
