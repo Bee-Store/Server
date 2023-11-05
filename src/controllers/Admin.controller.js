@@ -63,10 +63,10 @@ class AdminController {
       const ifPasswordMatch = user.password === hashed ? true : false;
 
       if (!ifPasswordMatch) {
-        return {
+        return res.status(404).json({
           status: 400,
           message: "Login failed. Either password or email is incorrect",
-        };
+        })
       }
 
       const accessToken = jwt.sign({ id: user.id }, process.env.JWT_SEC, {

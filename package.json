@@ -6,9 +6,11 @@
   "author": "Ian Kamau, Kennedy Icika, Barsu",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon ./src/index.js"
+    "dev": "nodemon ./src/index.js",
+    "seed": "node src/seeders/Admin.seeder.js"
   },
   "dependencies": {
+    "@faker-js/faker": "^8.2.0",
     "@types/multer": "^1.4.7",
     "axios": "^1.5.1",
     "body-parser": "^1.20.2",
