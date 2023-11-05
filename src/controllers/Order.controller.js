@@ -1,6 +1,7 @@
 const Order = require("./../models/Order.model");
 const User = require("./../models/User.model");
 const Logger = require("../middlewares/loggers/logger");
+const mongoose = require("mongoose");
 
 class OrderController {
   constructor() {}
@@ -41,6 +42,19 @@ class OrderController {
     } catch (error) {
       Logger.error(error);
       res.status(500).json({ error: "Internal Server Error" });
+    }
+  }
+
+  async GetCustomerOrder(req, res) {
+    try {
+      const user = await req.user;
+      const CustomerOrder = await Order.findOne({ "customerId": user.id });
+      if(!CustomerOrder){
+        res.status(404).json({ message: "You have no orders yet"});
+      }
+      res.json(CustomerOrder.products)
+    } catch (error) {
+      Logger.error(error);
     }
   }
 }
