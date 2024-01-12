@@ -73,52 +73,9 @@ class MpesaController {
             await newOrder.save();
           }
         });
-
-      // const passkey = process.env.MPESA_PASSKEY;
-
-      // const password = new Buffer.from(
-      //   shortcode + passkey + timestamp
-      // ).toString("base64");
-
-      // await axios
-      //   .post(
-      //     process.env.STK_URL,
-      //     {
-      //       BusinessShortCode: shortcode,
-      //       Password: password,
-      //       Timestamp: timestamp,
-      //       TransactionType: "CustomerPayBillOnline",
-      //       Amount: req.body.amount,
-      //       PartyA: `254${req.body.phone}`,
-      //       PartyB: shortcode,
-      //       PhoneNumber: `254742453610`,
-      //       CallBackURL: "https://mydomain.com/pat",
-      //       AccountReference: `254${req.body.phone}`,
-      //       TransactionDesc: "This is just a test transaction",
-      //     },
-      //     {
-      //       headers: {
-      //         Authorization: `Bearer ${token}`,
-      //       },
-      //     }
-      //   )
-      //   .then((data) => {
-      //     console.log(data.data);
-      //     res.status(200).json(data.data);
-      //   });
-      // console.log(token);
     } catch (error) {
       error;
       Logger.debug(error);
-      //   return {
-      //     status: 500,
-      //     message: "Stk push Failed",
-      //     error: {
-      //       errors: {
-      //         details: error,
-      //       },
-      //     },
-      //   };
     }
   }
 }
