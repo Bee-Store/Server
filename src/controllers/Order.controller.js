@@ -12,6 +12,8 @@ class OrderController {
       if (!allOrders) {
         res.status(404).json({ data: "No order found" });
       }
+
+      console.log(allOrders)
       res.status(200).json({ data: allOrders });
     } catch (error) {
       Logger.error(error);
