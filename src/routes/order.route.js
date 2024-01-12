@@ -11,4 +11,6 @@ router.get(
   OrderController.GetCustomerOrder
 );
 
+router.post("/add", OrderController.OrderProduct)
+
 module.exports = router;

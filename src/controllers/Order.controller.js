@@ -55,6 +55,13 @@ class OrderController {
       Logger.error(error);
     }
   }
+
+  async OrderProduct(req, res) {
+    try {
+    } catch (error) {
+      Logger.error(error);
+    }
+  }
 }
 
 module.exports = new OrderController();
