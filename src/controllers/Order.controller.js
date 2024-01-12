@@ -8,35 +8,11 @@ class OrderController {
 
   async GetAllOrders(req, res) {
     try {
-      const allOrders = await Order.find({}).lean(); // Use lean() to return plain JavaScript objects
+      const allOrders = await Order.find({}).populate("customerId"); // Use lean() to return plain JavaScript objects
       if (!allOrders) {
         res.status(404).json({ data: "No order found" });
       }
-      const ordersWithUsers = [];
-
-      for (const order of allOrders) {
-        const { customerId, ...orderData } = order;
-
-        try {
-          const user = await User.findOne({
-            _id: customerId,
-          }).lean(); // Use lean() to return plain JavaScript objects
-
-          if (user) {
-            // Combine user and order data
-            const orderWithUser = {
-              user,
-              ...orderData,
-            };
-            ordersWithUsers.push(orderWithUser);
-            res.status(200).json({ data: ordersWithUsers });
-          } else {
-            res.status(404).json({ data: "No order found" });
-          }
-        } catch (error) {
-          console.error(`Error retrieving user: ${error}`);
-        }
-      }
+      res.status(200).json({ data: allOrders });
     } catch (error) {
       Logger.error(error);
       res.status(500).json({ error: "Internal Server Error" });
