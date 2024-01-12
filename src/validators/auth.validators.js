@@ -1,5 +1,11 @@
 const jwt = require("jsonwebtoken");
 
+/**
+ * The `authenticateRequest` function is a middleware that checks if a request is authenticated by
+ * verifying the JWT token in the authorization header.
+ * @returns The `authenticateRequest` function returns an asynchronous middleware function that takes
+ * in `req`, `res`, and `next` as parameters.
+ */
 const authenticateRequest = () => {
   return async (req, res, next) => {
     try {

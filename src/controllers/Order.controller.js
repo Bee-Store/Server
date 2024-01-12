@@ -9,35 +9,33 @@ class OrderController {
   async GetAllOrders(req, res) {
     try {
       const allOrders = await Order.find({}).lean(); // Use lean() to return plain JavaScript objects
-      if (allOrders) {
-        const ordersWithUsers = [];
+      if (!allOrders) {
+        res.status(404).json({ data: "No order found" });
+      }
+      const ordersWithUsers = [];
 
-        for (const order of allOrders) {
-          const { customerId, ...orderData } = order;
+      for (const order of allOrders) {
+        const { customerId, ...orderData } = order;
 
-          try {
-            const user = await User.findOne({
-              _id: customerId,
-            }).lean(); // Use lean() to return plain JavaScript objects
+        try {
+          const user = await User.findOne({
+            _id: customerId,
+          }).lean(); // Use lean() to return plain JavaScript objects
 
-            if (user) {
-              // Combine user and order data
-              const orderWithUser = {
-                user,
-                ...orderData,
-              };
-              ordersWithUsers.push(orderWithUser);
-            } else {
-              console.log(
-                `User not found for order with customerId: ${customerId}`
-              );
-            }
-          } catch (error) {
-            console.error(`Error retrieving user: ${error}`);
+          if (user) {
+            // Combine user and order data
+            const orderWithUser = {
+              user,
+              ...orderData,
+            };
+            ordersWithUsers.push(orderWithUser);
+            res.status(200).json({ data: ordersWithUsers });
+          } else {
+            res.status(404).json({ data: "No order found" });
           }
+        } catch (error) {
+          console.error(`Error retrieving user: ${error}`);
         }
-
-        res.status(200).json({ data: ordersWithUsers });
       }
     } catch (error) {
       Logger.error(error);
@@ -48,11 +46,18 @@ class OrderController {
   async GetCustomerOrder(req, res) {
     try {
       const user = await req.user;
-      const CustomerOrder = await Order.findOne({ "customerId": user.id });
-      if(!CustomerOrder){
-        res.status(404).json({ message: "You have no orders yet"});
+      const CustomerOrder = await Order.findOne({ customerId: user.id });
+      if (!CustomerOrder) {
+        res.status(404).json({ message: "You have no orders yet" });
       }
-      res.json(CustomerOrder.products)
+      res.json(CustomerOrder.products);
+    } catch (error) {
+      Logger.error(error);
+    }
+  }
+
+  async OrderProduct(req, res) {
+    try {
     } catch (error) {
       Logger.error(error);
     }

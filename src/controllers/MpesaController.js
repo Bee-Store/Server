@@ -10,14 +10,12 @@ class MpesaController {
   constructor() {}
   async stk(req, res) {
     try {
-      console.log(req.body.tempCart);
       const user = await User.findById(req.body.user.id);
       const token = await req.token;
       const totalPrice = req.body.tempCart.reduce(
         (total, item) => total + item.product.price * item.quantity,
         0
       );
-      console.log(totalPrice);
       // generating timestamp
       const date = new Date();
       const timestamp =
@@ -57,71 +55,27 @@ class MpesaController {
             },
           }
         )
-        .then((data) => {
-          console.log(data);
-          res.status(200).json(data.data);
+        .then(async (data) => {
+          if (
+            data.data.ResponseDescription ===
+            "Success. Request accepted for processing"
+          ) {
+            res.status(200).json(data.data);
+            const newOrder = new Order({
+              // orderDetails:
+              customerId: user._id,
+              orderDate: timestamp,
+              totalAmount: totalPrice,
+              products: req.body.tempCart,
+              status: "Pending",
+            });
+
+            await newOrder.save();
+          }
         });
-
-        const newOrder = new Order({
-          // orderDetails:
-          customerId: user._id,
-          orderDate: timestamp,
-          totalAmount: totalPrice,
-          products: req.body.tempCart,
-          status: "Pending",
-        });
-
-        await newOrder.save();
-
-
-
-
-
-      // const passkey = process.env.MPESA_PASSKEY;
-
-      // const password = new Buffer.from(
-      //   shortcode + passkey + timestamp
-      // ).toString("base64");
-
-      // await axios
-      //   .post(
-      //     process.env.STK_URL,
-      //     {
-      //       BusinessShortCode: shortcode,
-      //       Password: password,
-      //       Timestamp: timestamp,
-      //       TransactionType: "CustomerPayBillOnline",
-      //       Amount: req.body.amount,
-      //       PartyA: `254${req.body.phone}`,
-      //       PartyB: shortcode,
-      //       PhoneNumber: `254742453610`,
-      //       CallBackURL: "https://mydomain.com/pat",
-      //       AccountReference: `254${req.body.phone}`,
-      //       TransactionDesc: "This is just a test transaction",
-      //     },
-      //     {
-      //       headers: {
-      //         Authorization: `Bearer ${token}`,
-      //       },
-      //     }
-      //   )
-      //   .then((data) => {
-      //     console.log(data.data);
-      //     res.status(200).json(data.data);
-      //   });
-      // console.log(token);
     } catch (error) {
-      console.log(error);
+      error;
       Logger.debug(error);
-      //   return {
-      //     status: 500,
-      //     message: "Stk push Failed",
-      //     error: {
-      //       errors: {
-      //         details: error,
-      //       },
-      //     },
-      //   };
     }
   }
 }

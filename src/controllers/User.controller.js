@@ -155,10 +155,9 @@ class UserController {
       const ifPasswordMatch = user.password === hashed ? true : false;
 
       if (!ifPasswordMatch) {
-        return {
-          status: 400,
+        res.status(404).json({
           message: "Login failed. Either password or email is incorrect",
-        };
+        });
       }
 
       // // Get the temporary cart from the request
@@ -299,11 +298,39 @@ class UserController {
     }
   }
 
-  // Get user profile
+  // Get user profile and update password
   async Profile(req, res) {
     try {
       const user = await req.user;
-      console.log(user.id);
+
+      if (!user) {
+        res.status(404).json({ message: "User not found" });
+      }
+
+      const findUser = await User.findById(user.id);
+
+      const hashed = CryptoJS.SHA256(
+        req.body.oldPassword,
+        process.env.PASS_SEC
+      ).toString();
+
+      const ifPasswordMatch = findUser.password === hashed ? true : false;
+
+      if (!ifPasswordMatch) {
+        return {
+          status: 400,
+          message: "Passwords do not match",
+        };
+      }
+
+      const newHashedPassword = CryptoJS.SHA256(
+        req.body.newPassword,
+        process.env.PASS_SEC
+      ).toString();
+
+      findUser.password = newHashedPassword;
+      await findUser.save();
+      res.status(200).json({ message: "Password updated successfully" });
     } catch (error) {
       Logger.debug(error);
       return {
