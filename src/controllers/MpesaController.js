@@ -62,20 +62,16 @@ class MpesaController {
           res.status(200).json(data.data);
         });
 
-        const newOrder = new Order({
-          // orderDetails:
-          customerId: user._id,
-          orderDate: timestamp,
-          totalAmount: totalPrice,
-          products: req.body.tempCart,
-          status: "Pending",
-        });
+      const newOrder = new Order({
+        // orderDetails:
+        customerId: user._id,
+        orderDate: timestamp,
+        totalAmount: totalPrice,
+        products: req.body.tempCart,
+        status: "Pending",
+      });
 
-        await newOrder.save();
-
-
-
-
+      await newOrder.save();
 
       // const passkey = process.env.MPESA_PASSKEY;
 

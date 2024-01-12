@@ -310,7 +310,7 @@ class UserController {
       const findUser = await User.findById(user.id);
 
       const hashed = CryptoJS.SHA256(
-        req.body.password,
+        req.body.oldPassword,
         process.env.PASS_SEC
       ).toString();
 
