@@ -60,7 +60,7 @@ class MpesaController {
             data.data.ResponseDescription ===
             "Success. Request accepted for processing"
           ) {
-            res.status(200).json(data.data);
+            // res.status(200).json(data.data);
             const newOrder = new Order({
               // orderDetails:
               customerId: user._id,
@@ -71,6 +71,7 @@ class MpesaController {
             });
 
             await newOrder.save();
+            res.status(201).json({Message: "Order saved successfully"})
           }
         });
     } catch (error) {
