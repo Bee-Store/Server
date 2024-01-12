@@ -12,6 +12,8 @@ class OrderController {
       if (!allOrders) {
         res.status(404).json({ data: "No order found" });
       }
+
+      console.log(allOrders)
       res.status(200).json({ data: allOrders });
     } catch (error) {
       Logger.error(error);
@@ -22,11 +24,11 @@ class OrderController {
   async GetCustomerOrder(req, res) {
     try {
       const user = await req.user;
-      const CustomerOrder = await Order.findOne({ customerId: user.id });
+      const CustomerOrder = await Order.find({ customerId: user.id });
       if (!CustomerOrder) {
         res.status(404).json({ message: "You have no orders yet" });
       }
-      res.json(CustomerOrder.products);
+      res.json(CustomerOrder);
     } catch (error) {
       Logger.error(error);
     }
