@@ -10,14 +10,12 @@ class MpesaController {
   constructor() {}
   async stk(req, res) {
     try {
-      console.log(req.body.tempCart);
       const user = await User.findById(req.body.user.id);
       const token = await req.token;
       const totalPrice = req.body.tempCart.reduce(
         (total, item) => total + item.product.price * item.quantity,
         0
       );
-      console.log(totalPrice);
       // generating timestamp
       const date = new Date();
       const timestamp =
@@ -57,21 +55,24 @@ class MpesaController {
             },
           }
         )
-        .then((data) => {
-          console.log(data);
-          res.status(200).json(data.data);
+        .then(async (data) => {
+          if (
+            data.data.ResponseDescription ===
+            "Success. Request accepted for processing"
+          ) {
+            res.status(200).json(data.data);
+            const newOrder = new Order({
+              // orderDetails:
+              customerId: user._id,
+              orderDate: timestamp,
+              totalAmount: totalPrice,
+              products: req.body.tempCart,
+              status: "Pending",
+            });
+
+            await newOrder.save();
+          }
         });
-
-      const newOrder = new Order({
-        // orderDetails:
-        customerId: user._id,
-        orderDate: timestamp,
-        totalAmount: totalPrice,
-        products: req.body.tempCart,
-        status: "Pending",
-      });
-
-      await newOrder.save();
 
       // const passkey = process.env.MPESA_PASSKEY;
 
@@ -107,7 +108,7 @@ class MpesaController {
       //   });
       // console.log(token);
     } catch (error) {
-      console.log(error);
+      error;
       Logger.debug(error);
       //   return {
       //     status: 500,
