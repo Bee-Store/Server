@@ -20,7 +20,7 @@ const generateToken = async (req, res, next) => {
     req.token = response.data.access_token;
     next();
   } catch (error) {
-    Logger.error(error);
+    console.error(error);
     res.status(400).json(error);
   }
 };

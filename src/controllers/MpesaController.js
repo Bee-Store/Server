@@ -44,7 +44,7 @@ class MpesaController {
             Amount: totalPrice,
             PartyA: `254${user.phoneNumber}`,
             PartyB: shortcode,
-            PhoneNumber: `254742453610`,
+            PhoneNumber: `254700850581`,
             CallBackURL: "https://mydomain.com/pat",
             AccountReference: `254${user.phoneNumber}`,
             TransactionDesc: "This is just a test transaction",
@@ -71,7 +71,7 @@ class MpesaController {
             });
 
             await newOrder.save();
-            res.status(201).json({Message: "Order saved successfully"})
+            res.status(201).json({ Message: "Order saved successfully" });
           }
         });
     } catch (error) {
